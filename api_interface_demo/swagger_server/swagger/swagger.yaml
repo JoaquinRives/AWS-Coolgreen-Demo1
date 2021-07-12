@@ -1,0 +1,1160 @@
+openapi: 3.0.0
+info:
+  title: Sitewise Interface API
+  description: Sitewise Interface API Draft001
+  version: 1.0.2
+
+  # TODO:
+  #  - finish responses and validation
+  #  - testing
+
+servers:
+# - url: http://Api114partial-env.eba-wam2eszv.eu-west-1.elasticbeanstalk.com
+- url: /
+
+paths:
+  /:
+    get:
+      tags:
+        - index
+      operationId: base
+      responses:
+        "200":
+          description: "base"
+      x-openapi-router-controller: swagger_server.controllers.index_controller
+      security: []
+  /index:
+    get:
+      tags:
+      - index
+      operationId: index
+      responses:
+        "200":
+          description: "index"
+      x-openapi-router-controller: swagger_server.controllers.index_controller
+      security: []
+  /sites:
+    get:
+      tags:
+      - Sites
+      operationId: get_sites
+      responses:
+        "200":
+          description: "{'ResponseMetadata': {'RequestId': '964b0463-0041-49dc-b62f-4f73a9d690cd',\
+            \ \n'HTTPStatusCode': 200, \n'HTTPHeaders': {'date': 'Mon, 28 Dec 2020\
+            \ 11:04:37 GMT', 'content-type': 'application/json', \n'content-length':\
+            \ '406', 'connection': 'keep-alive', 'x-amzn-requestid': '964b0463-0041-49dc-b62f-4f73a9d690cd'},\
+            \ \n'RetryAttempts': 0}, \n\n'assetSummaries': [\n\n{'id': '6627f48c-8d0a-481f-a305-b28e5258e319',\
+            \ \n'arn': 'arn:aws:iotsitewise:eu-west-1:241091466505:asset/6627f48c-8d0a-481f-a305-b28e5258e319',\
+            \ \n'name': 'site11', 'assetModelId': 'a106a0e4-1d20-46dc-a7a3-8dd3f902f48d',\
+            \ \n'creationDate': datetime.datetime(2020, 12, 28, 10, 40, 35, tzinfo=tzlocal()),\
+            \ \n'lastUpdateDate': datetime.datetime(2020, 12, 28, 10, 40, 35, tzinfo=tzlocal()),\
+            \ \n'status': {'state': 'ACTIVE'}, 'hierarchies': [{'id': 'd883ac38-6437-4180-8ef5-124d0358241a',\
+            \ \n'name': 'ZoneChilds'}]},\n\n{'id': '6627f48c-8d0a-481f-a305-b28e5258e319',\
+            \ \n'arn': 'arn:aws:iotsitewise:eu-west-1:241091466505:asset/6627f48c-8d0a-481f-a305-b28e5258e319',\
+            \ \n'name': 'site22', 'assetModelId': 'a106a0e4-1d20-46dc-a7a3-8dd3f902f48d',\
+            \ \n'creationDate': datetime.datetime(2020, 12, 28, 10, 40, 35, tzinfo=tzlocal()),\
+            \ \n'lastUpdateDate': datetime.datetime(2020, 12, 28, 10, 40, 35, tzinfo=tzlocal()),\
+            \ \n'status': {'state': 'ACTIVE'}, 'hierarchies': [{'id': 'd883ac38-6437-4180-8ef5-124d0358241a',\
+            \ \n'name': 'ZoneChilds'}]}\n]}\n"
+      x-openapi-router-controller: swagger_server.controllers.sites_controller
+    post:
+      tags:
+      - Sites
+      operationId: create_site
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NameObj'
+        required: true
+      responses:
+        "201":
+          description: "{'ResponseMetadata': {'RequestId': 'a7f4441a-204a-490f-8abc-d8225d1a9abc',\
+            \ \n'HTTPStatusCode': 202, \n'HTTPHeaders': {'date': 'Mon, 28 Dec 2020\
+            \ 09:40:35 GMT', 'content-type': 'application/json', \n'content-length':\
+            \ '184', 'connection': 'keep-alive', 'x-amzn-requestid': 'a7f4441a-204a-490f-8abc-d8225d1a9abc'},\
+            \ \n'RetryAttempts': 0}, \n'assetId': '6627f48c-8d0a-481f-a305-b28e5258e319',\
+            \ \n'assetArn': 'arn:aws:iotsitewise:eu-west-1:241091466505:asset/6627f48c-8d0a-481f-a305-b28e5258e319',\
+            \ \n'assetStatus': {'state': 'CREATING'}}\n"
+      x-openapi-router-controller: swagger_server.controllers.sites_controller
+  /sites/{siteId}:
+    get:
+      tags:
+      - Sites
+      operationId: get_site_by_id
+      parameters:
+      - name: siteId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/Id'
+      responses:
+        "200":
+          description: "{'ResponseMetadata': {'RequestId': '87500d5d-9742-46f4-b3b5-8490405851dc',\n\
+            \  'HTTPStatusCode': 200,\n  'HTTPHeaders': {'date': 'Mon, 28 Dec 2020\
+            \ 14:43:56 GMT',\n   'content-type': 'application/json',\n   'content-length':\
+            \ '1679',\n   'connection': 'keep-alive',\n   'x-amzn-requestid': '87500d5d-9742-46f4-b3b5-8490405851dc'},\n\
+            \  'RetryAttempts': 0},\n  \n 'assetId': '0e6499c9-2945-4bd8-8c93-3e193602d0a3',\n\
+            \ 'assetArn': 'arn:aws:iotsitewise:eu-west-1:241091466505:asset/0e6499c9-2945-4bd8-8c93-3e193602d0a3',\n\
+            \ 'assetName': 'site333',\n 'assetModelId': 'a106a0e4-1d20-46dc-a7a3-8dd3f902f48d',\n\
+            \ 'assetProperties': [\n   {'id': '08431a62-3bf0-4458-aac8-84f2452b5cca',\n\
+            \   'name': 'SiteName',\n   'notification': {'topic': '$aws/sitewise/asset-models/a106a0e4-1d20-46dc-a7a3-8dd3f902f48d/assets/0e6499c9-2945-4bd8-8c93-3e193602d0a3/properties/08431a62-3bf0-4458-aac8-84f2452b5cca',\n\
+            \    'state': 'DISABLED'},\n   'dataType': 'STRING'},\n  {'id': 'c3bac811-b33c-4c2c-b1f8-9c26c91d4274',\n\
+            \   'name': 'Site Sensor Node Avg Temp (5min)',\n   'notification': {'topic':\
+            \ '$aws/sitewise/asset-models/a106a0e4-1d20-46dc-a7a3-8dd3f902f48d/assets/0e6499c9-2945-4bd8-8c93-3e193602d0a3/properties/c3bac811-b33c-4c2c-b1f8-9c26c91d4274',\n\
+            \    'state': 'DISABLED'},\n   'dataType': 'DOUBLE'},\n  {'id': '32c1459c-cb22-41ed-9b00-3de4699f4075',\n\
+            \   'name': 'Site Asset Sensor Avg Temp (5min)',\n   'notification': {'topic':\
+            \ '$aws/sitewise/asset-models/a106a0e4-1d20-46dc-a7a3-8dd3f902f48d/assets/0e6499c9-2945-4bd8-8c93-3e193602d0a3/properties/32c1459c-cb22-41ed-9b00-3de4699f4075',\n\
+            \    'state': 'DISABLED'},\n   'dataType': 'DOUBLE'},\n  {'id': '5118bcc5-0117-4082-979c-98e24e4f8244',\n\
+            \   'name': 'Site Avg Power Usage (5min)',\n   'notification': {'topic':\
+            \ '$aws/sitewise/asset-models/a106a0e4-1d20-46dc-a7a3-8dd3f902f48d/assets/0e6499c9-2945-4bd8-8c93-3e193602d0a3/properties/5118bcc5-0117-4082-979c-98e24e4f8244',\n\
+            \    'state': 'DISABLED'},\n   'dataType': 'DOUBLE'}],\n 'assetHierarchies':\
+            \ [{'id': 'd883ac38-6437-4180-8ef5-124d0358241a',\n   'name': 'ZoneChilds'}],\n\
+            \ 'assetCompositeModels': [],\n 'assetCreationDate': datetime.datetime(2020,\
+            \ 12, 28, 12, 7, 26, tzinfo=tzlocal()),\n 'assetLastUpdateDate': datetime.datetime(2020,\
+            \ 12, 28, 12, 7, 26, tzinfo=tzlocal()),\n 'assetStatus': {'state': 'ACTIVE'}}\n"
+        "404":
+          description: Entity with specified id was not found
+      x-openapi-router-controller: swagger_server.controllers.sites_controller
+    delete:
+      tags:
+      - Sites
+      operationId: delete_site
+      parameters:
+      - name: siteId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/Id'
+      responses:
+        "204":
+          description: "Entity removed successfully\n\n{'ResponseMetadata': {'RequestId':\
+            \ '29725450-cf09-4a74-b510-a525c915834f', \n'HTTPStatusCode': 202, 'HTTPHeaders':\
+            \ {'date': 'Mon, 28 Dec 2020 11:09:41 GMT', 'content-type': 'application/json',\
+            \ \n'content-length': '36', 'connection': 'keep-alive', 'x-amzn-requestid':\
+            \ '29725450-cf09-4a74-b510-a525c915834f'}, \n'RetryAttempts': 0}, \n'assetStatus':\
+            \ {'state': 'DELETING'}}\n"
+        "404":
+          description: Entity with specified id was not found
+        "406":
+          description: Can not be delated because there are zones associated...
+      x-openapi-router-controller: swagger_server.controllers.sites_controller
+  /sites/properties/:
+    put:
+      tags:
+      - Sites
+      operationId: put_site_property_value
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssetProperty'
+        required: true
+      responses:
+        "200":
+          description: |2
+
+            {'ResponseMetadata': {'RequestId': 'e4209028-6785-4769-a639-ff51e6be8fb6',
+            'HTTPStatusCode': 200,
+            'HTTPHeaders': {'date': 'Mon, 28 Dec 2020 10:56:17 GMT',
+             'content-type': 'application/json',
+             'content-length': '19',
+             'connection': 'keep-alive',
+             'x-amzn-requestid': 'e4209028-6785-4769-a639-ff51e6be8fb6'},
+            'RetryAttempts': 0},
+            'errorEntries': []}
+        "404":
+          description: Entity with specified id was not found
+      x-openapi-router-controller: swagger_server.controllers.sites_controller
+  /sites/{siteId}/zones:
+    get:
+      tags:
+      - Sites
+      operationId: get_site_zones
+      parameters:
+      - name: siteId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/Id'
+      responses:
+        "200":
+          description: "Get zones of the site\n\n{'ResponseMetadata': {'RequestId':\
+            \ '618e1814-5af5-40d0-b9d0-c60f146cd7a1',\n  'HTTPStatusCode': 200,\n\
+            \  'HTTPHeaders': {'date': 'Mon, 28 Dec 2020 14:25:22 GMT',\n   'content-type':\
+            \ 'application/json',\n   'content-length': '483',\n   'connection': 'keep-alive',\n\
+            \   'x-amzn-requestid': '618e1814-5af5-40d0-b9d0-c60f146cd7a1'},\n  'RetryAttempts':\
+            \ 0},\n  \n 'assetSummaries': [\n    {'id': '5d363986-a624-4e2b-a122-3ef01d6cde78',\n\
+            \   'arn': 'arn:aws:iotsitewise:eu-west-1:241091466505:asset/5d363986-a624-4e2b-a122-3ef01d6cde78',\n\
+            \   'name': 'newzone333',\n   'assetModelId': '2bcfff28-ba76-44e5-8d8d-af10336fb448',\n\
+            \   'creationDate': datetime.datetime(2020, 12, 28, 12, 41, 28, tzinfo=tzlocal()),\n\
+            \   'lastUpdateDate': datetime.datetime(2020, 12, 28, 12, 41, 28, tzinfo=tzlocal()),\n\
+            \   'status': {'state': 'ACTIVE'},\n   'hierarchies': [{'id': 'b02d7852-f3e1-432f-9942-b9906451f82c',\n\
+            \     'name': 'SensorNodeChilds'},\n    {'id': '9f909579-8fef-4772-bbbb-a880018775ac',\n\
+            \     'name': 'AssetSensorChilds'}]},\n     \n    {'id': '5d363986-a624-4e2b-a122-3ef01d6cde78',\n\
+            \   'arn': 'arn:aws:iotsitewise:eu-west-1:241091466505:asset/5d363986-a624-4e2b-a122-3ef01d6cde78',\n\
+            \   'name': 'newzone444',\n   'assetModelId': '2bcfff28-ba76-44e5-8d8d-af10336fb448',\n\
+            \   'creationDate': datetime.datetime(2020, 12, 28, 12, 41, 28, tzinfo=tzlocal()),\n\
+            \   'lastUpdateDate': datetime.datetime(2020, 12, 28, 12, 41, 28, tzinfo=tzlocal()),\n\
+            \   'status': {'state': 'ACTIVE'},\n   'hierarchies': [{'id': 'b02d7852-f3e1-432f-9942-b9906451f82c',\n\
+            \     'name': 'SensorNodeChilds'},\n    {'id': '9f909579-8fef-4772-bbbb-a880018775ac',\n\
+            \     'name': 'AssetSensorChilds'}]}\n  ]\n}\n"
+        "404":
+          description: Entity with specified id was not found
+      x-openapi-router-controller: swagger_server.controllers.sites_controller
+  /sites/properties/{siteId}/:
+    get:
+      tags:
+      - Sites
+      operationId: get_site_property_values
+      parameters:
+      - name: siteId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/Id'
+      responses:
+        "200":
+          description: "Get site property values\n\n{\n'SiteName': {'value': {'stringValue':\
+            \ 'Site 0'}, 'timestamp': {'timeInSeconds': 1607011712, 'offsetInNanos':\
+            \ 0}, 'quality': 'GOOD'}, \n'Site Sensor Node Avg Temp (5min)': {'value':\
+            \ {'doubleValue': '23.0'}, 'timestamp': {'timeInSeconds': 1607011700,\
+            \ 'offsetInNanos': 0}, 'quality': 'GOOD'}}, \n'Site Asset Sensor Avg Temp\
+            \ (5min)': {'value': {'doubleValue': '23.0'}, 'timestamp': {'timeInSeconds':\
+            \ 1607011700, 'offsetInNanos': 0}, 'quality': 'GOOD'}}, \n'Site Avg Power\
+            \ Usage (5min)': {'value': {'doubleValue': '23.0'}, 'timestamp': {'timeInSeconds':\
+            \ 1607011700, 'offsetInNanos': 0}, 'quality': 'GOOD'}}\n}\n\n# NOTE:\n\
+            #  - if the property hasn't received any value yet from the sensor\n#\
+            \    the response will be 'null' like this:\n  'Site Avg Power Usage (5min)':\
+            \ 'null'\n"
+        "404":
+          description: Entity with specified id was not found
+      x-openapi-router-controller: swagger_server.controllers.sites_controller
+  /sites/properties/history:
+    post:
+      tags:
+      - Sites
+      operationId: get_site_property_value_history
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssetPropertyValueHistoryRequest'
+        required: true
+      responses:
+        "200":
+          description: |
+            Get property values from a specified time range.
+        "404":
+          description: Entity with specified id was not found
+      x-openapi-router-controller: swagger_server.controllers.sites_controller
+  /sites/{siteId}/associate/{zoneId}:
+    post:
+      tags:
+      - Sites
+      operationId: associate_zone
+      parameters:
+      - name: siteId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/Id'
+      - name: zoneId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/Id'
+      responses:
+        "200":
+          description: |
+            Associate a zone to a site
+
+            {'ResponseMetadata': {'RequestId': 'f0d2f325-59fb-4b14-93e9-5a565383eae2',
+            'HTTPStatusCode': 200,
+            'HTTPHeaders': {'date': 'Mon, 28 Dec 2020 14:23:27 GMT',
+             'content-type': 'application/json',
+             'content-length': '0',
+             'connection': 'keep-alive',
+             'x-amzn-requestid': 'f0d2f325-59fb-4b14-93e9-5a565383eae2'},
+            'RetryAttempts': 0}}
+        "404":
+          description: Entity with specified id was not found
+      x-openapi-router-controller: swagger_server.controllers.sites_controller
+  /sites/{siteId}/disassociate/{zoneId}:
+    post:
+      tags:
+      - Sites
+      operationId: disassociate_zone
+      parameters:
+      - name: siteId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/Id'
+      - name: zoneId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/Id'
+      responses:
+        "200":
+          description: |
+            Disssociate a zone from a site
+
+            {'ResponseMetadata': {'RequestId': 'f0d2f325-59fb-4b14-93e9-5a565383eae2',
+            'HTTPStatusCode': 200,
+            'HTTPHeaders': {'date': 'Mon, 28 Dec 2020 14:23:27 GMT',
+             'content-type': 'application/json',
+             'content-length': '0',
+             'connection': 'keep-alive',
+             'x-amzn-requestid': 'f0d2f325-59fb-4b14-93e9-5a565383eae2'},
+            'RetryAttempts': 0}}
+        "404":
+          description: Entity with specified id was not found
+      x-openapi-router-controller: swagger_server.controllers.sites_controller
+  /zones:
+    get:
+      tags:
+      - Zones
+      operationId: get_zones
+      responses:
+        "200":
+          description: "{'ResponseMetadata': {'RequestId': '0886febb-2290-4e17-8ddf-b208424d7399',\
+            \ \n'HTTPStatusCode': 200, 'HTTPHeaders': {'date': 'Mon, 28 Dec 2020 11:35:54\
+            \ GMT', 'content-type': 'application/json',\n'content-length': '478',\
+            \ 'connection': 'keep-alive', 'x-amzn-requestid': '0886febb-2290-4e17-8ddf-b208424d7399'},\
+            \ \n'RetryAttempts': 0}, \n\n'assetSummaries': [\n{'id': '667ed4de-4cb4-42c3-a09b-77aad59ee4c3',\
+            \ \n'arn': 'arn:aws:iotsitewise:eu-west-1:241091466505:asset/667ed4de-4cb4-42c3-a09b-77aad59ee4c3',\
+            \ \n'name': 'zone6', \n'assetModelId': '2bcfff28-ba76-44e5-8d8d-af10336fb448',\
+            \ \n'creationDate': datetime.datetime(2020, 12, 23, 11, 5, 59, tzinfo=tzlocal()),\
+            \ \n'lastUpdateDate': datetime.datetime(2020, 12, 23, 11, 5, 59, tzinfo=tzlocal()),\
+            \ \n'status': {'state': 'ACTIVE'}, \n'hierarchies': [\n    {'id': 'b02d7852-f3e1-432f-9942-b9906451f82c',\
+            \ 'name': 'SensorNodeChilds'}, \n    {'id': '9f909579-8fef-4772-bbbb-a880018775ac',\
+            \ 'name': 'AssetSensorChilds'}]},\n    \n{'id': '667ed4de-4cb4-42c3-a09b-77aad59ee4c3',\
+            \ \n'arn': 'arn:aws:iotsitewise:eu-west-1:241091466505:asset/667ed4de-4cb4-42c3-a09b-77aad59ee4c3',\
+            \ \n'name': 'zone7', \n'assetModelId': '2bcfff28-ba76-44e5-8d8d-af10336fb448',\
+            \ \n'creationDate': datetime.datetime(2020, 12, 23, 11, 5, 59, tzinfo=tzlocal()),\
+            \ \n'lastUpdateDate': datetime.datetime(2020, 12, 23, 11, 5, 59, tzinfo=tzlocal()),\
+            \ \n'status': {'state': 'ACTIVE'}, \n'hierarchies': [\n    {'id': 'b02d7852-f3e1-432f-9942-b9906451f82c',\
+            \ 'name': 'SensorNodeChilds'}, \n    {'id': '9f909579-8fef-4772-bbbb-a880018775ac',\
+            \ 'name': 'AssetSensorChilds'}]}\n]\n}\n"
+      x-openapi-router-controller: swagger_server.controllers.zones_controller
+    post:
+      tags:
+      - Zones
+      operationId: create_zone
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NameObj'
+        required: true
+      responses:
+        "201":
+          description: "{'ResponseMetadata': {'RequestId': 'a7f4441a-204a-490f-8abc-d8225d1a9abc',\
+            \ \n'HTTPStatusCode': 202, \n'HTTPHeaders': {'date': 'Mon, 28 Dec 2020\
+            \ 09:40:35 GMT', 'content-type': 'application/json', \n'content-length':\
+            \ '184', 'connection': 'keep-alive', 'x-amzn-requestid': 'a7f4441a-204a-490f-8abc-d8225d1a9abc'},\
+            \ \n'RetryAttempts': 0}, \n'assetId': '6627f48c-8d0a-481f-a305-b28e5258e319',\
+            \ \n'assetArn': 'arn:aws:iotsitewise:eu-west-1:241091466505:asset/6627f48c-8d0a-481f-a305-b28e5258e319',\
+            \ \n'assetStatus': {'state': 'CREATING'}}\n"
+      x-openapi-router-controller: swagger_server.controllers.zones_controller
+  /zones/{zoneId}:
+    get:
+      tags:
+      - Zones
+      operationId: get_zone_by_id
+      parameters:
+      - name: zoneId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/Id'
+      responses:
+        "200":
+          description: |
+            {'ResponseMetadata': {'RequestId': 'a9606092-dbc1-4ef2-8db6-df6179dc25c8',
+              'HTTPStatusCode': 200,
+              'HTTPHeaders': {'date': 'Mon, 28 Dec 2020 14:47:57 GMT',
+               'content-type': 'application/json',
+               'content-length': '1741',
+               'connection': 'keep-alive',
+               'x-amzn-requestid': 'a9606092-dbc1-4ef2-8db6-df6179dc25c8'},
+              'RetryAttempts': 0},
+             'assetId': '5d363986-a624-4e2b-a122-3ef01d6cde78',
+             'assetArn': 'arn:aws:iotsitewise:eu-west-1:241091466505:asset/5d363986-a624-4e2b-a122-3ef01d6cde78',
+             'assetName': 'newzone333',
+             'assetModelId': '2bcfff28-ba76-44e5-8d8d-af10336fb448',
+             'assetProperties': [{'id': '6fc2fab2-1544-4455-bfa5-68ccb13e7be1',
+               'name': 'ZoneName',
+               'notification': {'topic': '$aws/sitewise/asset-models/2bcfff28-ba76-44e5-8d8d-af10336fb448/assets/5d363986-a624-4e2b-a122-3ef01d6cde78/properties/6fc2fab2-1544-4455-bfa5-68ccb13e7be1',
+                'state': 'DISABLED'},
+               'dataType': 'STRING'},
+              {'id': 'a72b7466-02de-4295-8ac2-a858b3a4ad7c',
+               'name': 'ZoneSensorNodeAvgTemp5min',
+               'notification': {'topic': '$aws/sitewise/asset-models/2bcfff28-ba76-44e5-8d8d-af10336fb448/assets/5d363986-a624-4e2b-a122-3ef01d6cde78/properties/a72b7466-02de-4295-8ac2-a858b3a4ad7c',
+                'state': 'DISABLED'},
+               'dataType': 'DOUBLE'},
+              {'id': 'fd61eac5-c93d-433c-9893-b037a4d1cbc3',
+               'name': 'ZoneAssetSensorAvgTemp5min',
+               'notification': {'topic': '$aws/sitewise/asset-models/2bcfff28-ba76-44e5-8d8d-af10336fb448/assets/5d363986-a624-4e2b-a122-3ef01d6cde78/properties/fd61eac5-c93d-433c-9893-b037a4d1cbc3',
+                'state': 'DISABLED'},
+               'dataType': 'DOUBLE'},
+              {'id': '3fc34e60-ac4f-4395-aca7-2ddc36ebf284',
+               'name': 'Zone Avg Power Usage (5min)',
+               'notification': {'topic': '$aws/sitewise/asset-models/2bcfff28-ba76-44e5-8d8d-af10336fb448/assets/5d363986-a624-4e2b-a122-3ef01d6cde78/properties/3fc34e60-ac4f-4395-aca7-2ddc36ebf284',
+                'state': 'DISABLED'},
+               'dataType': 'DOUBLE'}],
+             'assetHierarchies': [{'id': 'b02d7852-f3e1-432f-9942-b9906451f82c',
+               'name': 'SensorNodeChilds'},
+              {'id': '9f909579-8fef-4772-bbbb-a880018775ac', 'name': 'AssetSensorChilds'}],
+             'assetCompositeModels': [],
+             'assetCreationDate': datetime.datetime(2020, 12, 28, 12, 41, 28, tzinfo=tzlocal()),
+             'assetLastUpdateDate': datetime.datetime(2020, 12, 28, 12, 41, 28, tzinfo=tzlocal()),
+             'assetStatus': {'state': 'ACTIVE'}}
+        "404":
+          description: Entity with specified id was not found
+      x-openapi-router-controller: swagger_server.controllers.zones_controller
+    delete:
+      tags:
+      - Zones
+      operationId: delete_zone
+      parameters:
+      - name: zoneId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/Id'
+      responses:
+        "204":
+          description: "Entity removed successfully\n\n{'ResponseMetadata': {'RequestId':\
+            \ '29725450-cf09-4a74-b510-a525c915834f', \n'HTTPStatusCode': 202, 'HTTPHeaders':\
+            \ {'date': 'Mon, 28 Dec 2020 11:09:41 GMT', 'content-type': 'application/json',\
+            \ \n'content-length': '36', 'connection': 'keep-alive', 'x-amzn-requestid':\
+            \ '29725450-cf09-4a74-b510-a525c915834f'}, \n'RetryAttempts': 0}, \n'assetStatus':\
+            \ {'state': 'DELETING'}}\n"
+        "404":
+          description: Entity with specified id was not found
+        "406":
+          description: Can not be delated because there are zones associated...
+      x-openapi-router-controller: swagger_server.controllers.zones_controller
+  /zones/properties/:
+    put:
+      tags:
+      - Zones
+      operationId: put_zone_property_value
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssetProperty'
+        required: true
+      responses:
+        "200":
+          description: |2
+
+            {'ResponseMetadata': {'RequestId': 'e4209028-6785-4769-a639-ff51e6be8fb6',
+            'HTTPStatusCode': 200,
+            'HTTPHeaders': {'date': 'Mon, 28 Dec 2020 10:56:17 GMT',
+             'content-type': 'application/json',
+             'content-length': '19',
+             'connection': 'keep-alive',
+             'x-amzn-requestid': 'e4209028-6785-4769-a639-ff51e6be8fb6'},
+            'RetryAttempts': 0},
+            'errorEntries': []}
+        "404":
+          description: Entity with specified id was not found
+      x-openapi-router-controller: swagger_server.controllers.zones_controller
+  /zones/{zoneId}/sensors:
+    get:
+      tags:
+      - Zones
+      operationId: get_zone_all_sensors
+      parameters:
+      - name: zoneId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/Id'
+      responses:
+        "200":
+          description: |
+            Get zones sensors (asset sensors)
+
+            {'ResponseMetadata': {'RequestId': '26e736bd-a7fc-4039-9699-e8a20838a4e0',
+              'HTTPStatusCode': 200,
+              'HTTPHeaders': {'date': 'Tue, 29 Dec 2020 11:14:37 GMT',
+               'content-type': 'application/json',
+               'content-length': '340',
+               'connection': 'keep-alive',
+               'x-amzn-requestid': '26e736bd-a7fc-4039-9699-e8a20838a4e0'},
+              'RetryAttempts': 0},
+             'assetSummaries': [
+                {'id': '1f08d927-c544-48f5-a9d5-c98bd9ce852f',
+                   'arn': 'arn:aws:iotsitewise:eu-west-1:241091466505:asset/1f08d927-c544-48f5-a9d5-c98bd9ce852f',
+                   'name': 'sensornode6',
+                   'assetModelId': '4c586961-6f99-4364-8847-267608f6c3e6',
+                   'creationDate': datetime.datetime(2020, 12, 23, 11, 5, 59, tzinfo=tzlocal()),
+                   'lastUpdateDate': datetime.datetime(2020, 12, 23, 11, 5, 59, tzinfo=tzlocal()),
+                   'status': {'state': 'ACTIVE'},
+                   'hierarchies': []},
+                {'id': '1f08d927-c544-48f5-a9d5-c98bd9ce852f',
+                   'arn': 'arn:aws:iotsitewise:eu-west-1:241091466505:asset/1f08d927-c544-48f5-a9d5-c98bd9ce852f',
+                   'name': 'assetsensor7',
+                   'assetModelId': '4c586961-6f99-4364-8847-267608f6c3e6',
+                   'creationDate': datetime.datetime(2020, 12, 23, 11, 5, 59, tzinfo=tzlocal()),
+                   'lastUpdateDate': datetime.datetime(2020, 12, 23, 11, 5, 59, tzinfo=tzlocal()),
+                   'status': {'state': 'ACTIVE'},
+                   'hierarchies': []}
+               ]
+             }
+        "404":
+          description: Entity with specified id was not found
+      x-openapi-router-controller: swagger_server.controllers.zones_controller
+  /zones/{zoneId}/sensornodesensors:
+    get:
+      tags:
+      - Zones
+      operationId: get_zone_sensornode_sensors
+      parameters:
+      - name: zoneId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/Id'
+      responses:
+        "200":
+          description: |
+            Get zones sensors (sensor node)
+
+            {'ResponseMetadata': {'RequestId': '26e736bd-a7fc-4039-9699-e8a20838a4e0',
+              'HTTPStatusCode': 200,
+              'HTTPHeaders': {'date': 'Tue, 29 Dec 2020 11:14:37 GMT',
+               'content-type': 'application/json',
+               'content-length': '340',
+               'connection': 'keep-alive',
+               'x-amzn-requestid': '26e736bd-a7fc-4039-9699-e8a20838a4e0'},
+              'RetryAttempts': 0},
+             'assetSummaries': [
+                {'id': '1f08d927-c544-48f5-a9d5-c98bd9ce852f',
+                   'arn': 'arn:aws:iotsitewise:eu-west-1:241091466505:asset/1f08d927-c544-48f5-a9d5-c98bd9ce852f',
+                   'name': 'sensornode6',
+                   'assetModelId': '4c586961-6f99-4364-8847-267608f6c3e6',
+                   'creationDate': datetime.datetime(2020, 12, 23, 11, 5, 59, tzinfo=tzlocal()),
+                   'lastUpdateDate': datetime.datetime(2020, 12, 23, 11, 5, 59, tzinfo=tzlocal()),
+                   'status': {'state': 'ACTIVE'},
+                   'hierarchies': []},
+                {'id': '1f08d927-c544-48f5-a9d5-c98bd9ce852f',
+                   'arn': 'arn:aws:iotsitewise:eu-west-1:241091466505:asset/1f08d927-c544-48f5-a9d5-c98bd9ce852f',
+                   'name': 'sensornode7',
+                   'assetModelId': '4c586961-6f99-4364-8847-267608f6c3e6',
+                   'creationDate': datetime.datetime(2020, 12, 23, 11, 5, 59, tzinfo=tzlocal()),
+                   'lastUpdateDate': datetime.datetime(2020, 12, 23, 11, 5, 59, tzinfo=tzlocal()),
+                   'status': {'state': 'ACTIVE'},
+                   'hierarchies': []}
+               ]
+             }
+        "404":
+          description: Entity with specified id was not found
+      x-openapi-router-controller: swagger_server.controllers.zones_controller
+  /zones/{zoneId}/assetsensorsensors:
+    get:
+      tags:
+      - Zones
+      operationId: get_zone_assetsensor_sensors
+      parameters:
+      - name: zoneId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/Id'
+      responses:
+        "200":
+          description: |
+            Get zones sensors (asset sensors)
+
+            {'ResponseMetadata': {'RequestId': '26e736bd-a7fc-4039-9699-e8a20838a4e0',
+              'HTTPStatusCode': 200,
+              'HTTPHeaders': {'date': 'Tue, 29 Dec 2020 11:14:37 GMT',
+               'content-type': 'application/json',
+               'content-length': '340',
+               'connection': 'keep-alive',
+               'x-amzn-requestid': '26e736bd-a7fc-4039-9699-e8a20838a4e0'},
+              'RetryAttempts': 0},
+             'assetSummaries': [
+                {'id': '1f08d927-c544-48f5-a9d5-c98bd9ce852f',
+                   'arn': 'arn:aws:iotsitewise:eu-west-1:241091466505:asset/1f08d927-c544-48f5-a9d5-c98bd9ce852f',
+                   'name': 'assetsensor6',
+                   'assetModelId': '4c586961-6f99-4364-8847-267608f6c3e6',
+                   'creationDate': datetime.datetime(2020, 12, 23, 11, 5, 59, tzinfo=tzlocal()),
+                   'lastUpdateDate': datetime.datetime(2020, 12, 23, 11, 5, 59, tzinfo=tzlocal()),
+                   'status': {'state': 'ACTIVE'},
+                   'hierarchies': []},
+                {'id': '1f08d927-c544-48f5-a9d5-c98bd9ce852f',
+                   'arn': 'arn:aws:iotsitewise:eu-west-1:241091466505:asset/1f08d927-c544-48f5-a9d5-c98bd9ce852f',
+                   'name': 'assetsensor7',
+                   'assetModelId': '4c586961-6f99-4364-8847-267608f6c3e6',
+                   'creationDate': datetime.datetime(2020, 12, 23, 11, 5, 59, tzinfo=tzlocal()),
+                   'lastUpdateDate': datetime.datetime(2020, 12, 23, 11, 5, 59, tzinfo=tzlocal()),
+                   'status': {'state': 'ACTIVE'},
+                   'hierarchies': []}
+               ]
+             }
+        "404":
+          description: Entity with specified id was not found
+      x-openapi-router-controller: swagger_server.controllers.zones_controller
+  /zones/properties/{zoneId}:
+    get:
+      tags:
+      - Zones
+      operationId: get_zone_property_values
+      parameters:
+      - name: zoneId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/Id'
+      responses:
+        "200":
+          description: "Get zone property values\n\n{'ZoneName': {'value': {'stringValue':\
+            \ 'Zone 0'}, 'timestamp': {'timeInSeconds': 1607011700, 'offsetInNanos':\
+            \ 0}, 'quality': 'GOOD'}, \n'ZoneSensorNodeAvgTemp5min': {'value': {'doubleValue':\
+            \ '23.0'}, 'timestamp': {'timeInSeconds': 1607011700, 'offsetInNanos':\
+            \ 0}, 'quality': 'GOOD'}, \n'ZoneAssetSensorAvgTemp5min': {'value': {'doubleValue':\
+            \ '23.0'}, 'timestamp': {'timeInSeconds': 1607011700, 'offsetInNanos':\
+            \ 0}, 'quality': 'GOOD'}, \n'Zone Avg Power Usage (5min)': {'value': {'doubleValue':\
+            \ '23.0'}, 'timestamp': {'timeInSeconds': 1607011700, 'offsetInNanos':\
+            \ 0}, 'quality': 'GOOD'}}\n\n# NOTE:\n#  - if the property hasn't received\
+            \ any value yet from the sensor\n#    the response will be 'null' like\
+            \ this:\n  'Zone Avg Power Usage (5min)': 'null'\n  \n"
+        "404":
+          description: Entity with specified id was not found
+      x-openapi-router-controller: swagger_server.controllers.zones_controller
+  /zones/properties/history:
+    post:
+      tags:
+      - Zones
+      operationId: get_zone_property_value_history
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssetPropertyValueHistoryRequest'
+        required: true
+      responses:
+        "200":
+          description: |
+            Get property values from a specified time range.
+        "404":
+          description: Entity with specified id was not found
+      x-openapi-router-controller: swagger_server.controllers.zones_controller
+  /zones/{zoneId}/associate/{sensorId}:
+    post:
+      tags:
+      - Zones
+      operationId: associate_sensor
+      parameters:
+      - name: zoneId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/Id'
+      - name: sensorId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/Id'
+      responses:
+        "200":
+          description: |
+            Associate a senor to a zone
+
+            {'ResponseMetadata': {'RequestId': 'f0d2f325-59fb-4b14-93e9-5a565383eae2',
+            'HTTPStatusCode': 200,
+            'HTTPHeaders': {'date': 'Mon, 28 Dec 2020 14:23:27 GMT',
+             'content-type': 'application/json',
+             'content-length': '0',
+             'connection': 'keep-alive',
+             'x-amzn-requestid': 'f0d2f325-59fb-4b14-93e9-5a565383eae2'},
+            'RetryAttempts': 0}}
+        "404":
+          description: Entity with specified id was not found
+      x-openapi-router-controller: swagger_server.controllers.zones_controller
+  /zones/{zoneId}/disassociate/{sensorId}:
+    post:
+      tags:
+      - Zones
+      operationId: disassociate_sensor
+      parameters:
+      - name: zoneId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/Id'
+      - name: sensorId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/Id'
+      responses:
+        "200":
+          description: |
+            Disassociate a sensor from a zone
+
+            {'ResponseMetadata': {'RequestId': 'f0d2f325-59fb-4b14-93e9-5a565383eae2',
+            'HTTPStatusCode': 200,
+            'HTTPHeaders': {'date': 'Mon, 28 Dec 2020 14:23:27 GMT',
+             'content-type': 'application/json',
+             'content-length': '0',
+             'connection': 'keep-alive',
+             'x-amzn-requestid': 'f0d2f325-59fb-4b14-93e9-5a565383eae2'},
+            'RetryAttempts': 0}}
+        "404":
+          description: Entity with specified id was not found
+      x-openapi-router-controller: swagger_server.controllers.zones_controller
+  /sensors/type/{sensorType}:
+    get:
+      tags:
+      - Sensors
+      operationId: get_sensors
+      parameters:
+      - name: sensorType
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/SensorType'
+      responses:
+        "200":
+          description: "{'ResponseMetadata': {'RequestId': 'd550bb83-6e36-43e6-a843-5acf94eb1deb',\n\
+            \  'HTTPStatusCode': 200,\n  'HTTPHeaders': {'date': 'Mon, 28 Dec 2020\
+            \ 15:01:38 GMT',\n   'content-type': 'application/json',\n   'content-length':\
+            \ '340',\n   'connection': 'keep-alive',\n   'x-amzn-requestid': 'd550bb83-6e36-43e6-a843-5acf94eb1deb'},\n\
+            \  'RetryAttempts': 0},\n 'assetSummaries': [\n \n {'id': '1f08d927-c544-48f5-a9d5-c98bd9ce852f',\n\
+            \   'arn': 'arn:aws:iotsitewise:eu-west-1:241091466505:asset/1f08d927-c544-48f5-a9d5-c98bd9ce852f',\n\
+            \   'name': 'sensornode6',\n   'assetModelId': '4c586961-6f99-4364-8847-267608f6c3e6',\n\
+            \   'creationDate': datetime.datetime(2020, 12, 23, 11, 5, 59, tzinfo=tzlocal()),\n\
+            \   'lastUpdateDate': datetime.datetime(2020, 12, 23, 11, 5, 59, tzinfo=tzlocal()),\n\
+            \   'status': {'state': 'ACTIVE'},\n   'hierarchies': []},\n\n {'id':\
+            \ '1f08d927-c544-48f5-a9d5-c98bd9ce852f',\n   'arn': 'arn:aws:iotsitewise:eu-west-1:241091466505:asset/1f08d927-c544-48f5-a9d5-c98bd9ce852f',\n\
+            \   'name': 'sensornode7',\n   'assetModelId': '4c586961-6f99-4364-8847-267608f6c3e6',\n\
+            \   'creationDate': datetime.datetime(2020, 12, 23, 11, 5, 59, tzinfo=tzlocal()),\n\
+            \   'lastUpdateDate': datetime.datetime(2020, 12, 23, 11, 5, 59, tzinfo=tzlocal()),\n\
+            \   'status': {'state': 'ACTIVE'},\n   'hierarchies': []}\n   ]\n}\n"
+      x-openapi-router-controller: swagger_server.controllers.sensors_controller
+  /sensors:
+    get:
+      tags:
+      - Sensors
+      operationId: get_all_sensors
+      responses:
+        "200":
+          description: "{'ResponseMetadata': {'RequestId': 'd550bb83-6e36-43e6-a843-5acf94eb1deb',\n\
+            \  'HTTPStatusCode': 200,\n  'HTTPHeaders': {'date': 'Mon, 28 Dec 2020\
+            \ 15:01:38 GMT',\n   'content-type': 'application/json',\n   'content-length':\
+            \ '340',\n   'connection': 'keep-alive',\n   'x-amzn-requestid': 'd550bb83-6e36-43e6-a843-5acf94eb1deb'},\n\
+            \  'RetryAttempts': 0},\n 'assetSummaries': [\n \n {'id': '1f08d927-c544-48f5-a9d5-c98bd9ce852f',\n\
+            \   'arn': 'arn:aws:iotsitewise:eu-west-1:241091466505:asset/1f08d927-c544-48f5-a9d5-c98bd9ce852f',\n\
+            \   'name': 'sensornode6',\n   'assetModelId': '4c586961-6f99-4364-8847-267608f6c3e6',\n\
+            \   'creationDate': datetime.datetime(2020, 12, 23, 11, 5, 59, tzinfo=tzlocal()),\n\
+            \   'lastUpdateDate': datetime.datetime(2020, 12, 23, 11, 5, 59, tzinfo=tzlocal()),\n\
+            \   'status': {'state': 'ACTIVE'},\n   'hierarchies': []},\n\n {'id':\
+            \ '1f08d927-c544-48f5-a9d5-c98bd9ce852f',\n   'arn': 'arn:aws:iotsitewise:eu-west-1:241091466505:asset/1f08d927-c544-48f5-a9d5-c98bd9ce852f',\n\
+            \   'name': 'assetsensor7',\n   'assetModelId': '4c586961-6f99-4364-8847-267608f6c3e6',\n\
+            \   'creationDate': datetime.datetime(2020, 12, 23, 11, 5, 59, tzinfo=tzlocal()),\n\
+            \   'lastUpdateDate': datetime.datetime(2020, 12, 23, 11, 5, 59, tzinfo=tzlocal()),\n\
+            \   'status': {'state': 'ACTIVE'},\n   'hierarchies': []}\n   ]\n}\n"
+      x-openapi-router-controller: swagger_server.controllers.sensors_controller
+    post:
+      tags:
+      - Sensors
+      operationId: create_sensor
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSensor'
+        required: true
+      responses:
+        "201":
+          description: "{'ResponseMetadata': {'RequestId': 'a7f4441a-204a-490f-8abc-d8225d1a9abc',\
+            \ \n'HTTPStatusCode': 202, \n'HTTPHeaders': {'date': 'Mon, 28 Dec 2020\
+            \ 09:40:35 GMT', 'content-type': 'application/json', \n'content-length':\
+            \ '184', 'connection': 'keep-alive', 'x-amzn-requestid': 'a7f4441a-204a-490f-8abc-d8225d1a9abc'},\
+            \ \n'RetryAttempts': 0}, \n'assetId': '6627f48c-8d0a-481f-a305-b28e5258e319',\
+            \ \n'assetArn': 'arn:aws:iotsitewise:eu-west-1:241091466505:asset/6627f48c-8d0a-481f-a305-b28e5258e319',\
+            \ \n'assetStatus': {'state': 'CREATING'}}\n"
+      x-openapi-router-controller: swagger_server.controllers.sensors_controller
+  /sensors/{sensorId}:
+    get:
+      tags:
+      - Sensors
+      operationId: get_sensor_by_id
+      parameters:
+      - name: sensorId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/Id'
+      responses:
+        "200":
+          description: "\n# SENSOR NODE\n \n{'ResponseMetadata': {'RequestId': '5146d2e7-4f90-4b7a-ae3c-2a9df98f5f65',\n\
+            \  'HTTPStatusCode': 200,\n  'HTTPHeaders': {'date': 'Tue, 29 Dec 2020\
+            \ 11:50:41 GMT',\n   'content-type': 'application/json',\n   'content-length':\
+            \ '2766',\n   'connection': 'keep-alive',\n   'x-amzn-requestid': '5146d2e7-4f90-4b7a-ae3c-2a9df98f5f65'},\n\
+            \  'RetryAttempts': 0},\n 'assetId': '1f08d927-c544-48f5-a9d5-c98bd9ce852f',\n\
+            \ 'assetArn': 'arn:aws:iotsitewise:eu-west-1:241091466505:asset/1f08d927-c544-48f5-a9d5-c98bd9ce852f',\n\
+            \ 'assetName': 'sensornode6',\n 'assetModelId': '4c586961-6f99-4364-8847-267608f6c3e6',\n\
+            \ 'assetProperties': [{'id': 'b60a9516-0f43-4b57-ac66-a3dcccd163a2',\n\
+            \   'name': 'Wattage',\n   'notification': {'topic': '$aws/sitewise/asset-models/4c586961-6f99-4364-8847-267608f6c3e6/assets/1f08d927-c544-48f5-a9d5-c98bd9ce852f/properties/b60a9516-0f43-4b57-ac66-a3dcccd163a2',\n\
+            \    'state': 'DISABLED'},\n   'dataType': 'DOUBLE'},\n  {'id': '77fa4aab-ccee-4c39-8a6f-adc2397255fb',\n\
+            \   'name': 'Temperature',\n   'alias': '/1234/temp/new',\n   'notification':\
+            \ {'topic': '$aws/sitewise/asset-models/4c586961-6f99-4364-8847-267608f6c3e6/assets/1f08d927-c544-48f5-a9d5-c98bd9ce852f/properties/77fa4aab-ccee-4c39-8a6f-adc2397255fb',\n\
+            \    'state': 'DISABLED'},\n   'dataType': 'DOUBLE'},\n  {'id': 'b6782336-be97-451b-8976-43661a1fed87',\n\
+            \   'name': 'WorkingState',\n   'notification': {'topic': '$aws/sitewise/asset-models/4c586961-6f99-4364-8847-267608f6c3e6/assets/1f08d927-c544-48f5-a9d5-c98bd9ce852f/properties/b6782336-be97-451b-8976-43661a1fed87',\n\
+            \    'state': 'DISABLED'},\n   'dataType': 'INTEGER'},\n  {'id': 'a754504e-c752-45ff-9031-0afda64f0875',\n\
+            \   'name': 'Movement',\n   'notification': {'topic': '$aws/sitewise/asset-models/4c586961-6f99-4364-8847-267608f6c3e6/assets/1f08d927-c544-48f5-a9d5-c98bd9ce852f/properties/a754504e-c752-45ff-9031-0afda64f0875',\n\
+            \    'state': 'DISABLED'},\n   'dataType': 'INTEGER'},\n  {'id': '28f8e479-133d-4950-a60c-e0ca3dafe3e0',\n\
+            \   'name': 'Avg Temperature (5 min)',\n   'notification': {'topic': '$aws/sitewise/asset-models/4c586961-6f99-4364-8847-267608f6c3e6/assets/1f08d927-c544-48f5-a9d5-c98bd9ce852f/properties/28f8e479-133d-4950-a60c-e0ca3dafe3e0',\n\
+            \    'state': 'DISABLED'},\n   'dataType': 'DOUBLE'},\n  {'id': '1d4fc8a0-f704-4853-9f3d-2ddf85315c54',\n\
+            \   'name': 'Avg Temperature (Day)',\n   'notification': {'topic': '$aws/sitewise/asset-models/4c586961-6f99-4364-8847-267608f6c3e6/assets/1f08d927-c544-48f5-a9d5-c98bd9ce852f/properties/1d4fc8a0-f704-4853-9f3d-2ddf85315c54',\n\
+            \    'state': 'DISABLED'},\n   'dataType': 'DOUBLE'},\n  {'id': 'bab8280a-f4f1-4964-91fd-92640f0e1e40',\n\
+            \   'name': 'Power Usage',\n   'notification': {'topic': '$aws/sitewise/asset-models/4c586961-6f99-4364-8847-267608f6c3e6/assets/1f08d927-c544-48f5-a9d5-c98bd9ce852f/properties/bab8280a-f4f1-4964-91fd-92640f0e1e40',\n\
+            \    'state': 'DISABLED'},\n   'dataType': 'DOUBLE'},\n  {'id': 'bfbc53e6-3fdb-44d1-9601-6daa5d66aebd',\n\
+            \   'name': 'Avg Power Usage (5min)',\n   'notification': {'topic': '$aws/sitewise/asset-models/4c586961-6f99-4364-8847-267608f6c3e6/assets/1f08d927-c544-48f5-a9d5-c98bd9ce852f/properties/bfbc53e6-3fdb-44d1-9601-6daa5d66aebd',\n\
+            \    'state': 'DISABLED'},\n   'dataType': 'DOUBLE'}],\n 'assetHierarchies':\
+            \ [],\n 'assetCompositeModels': [],\n 'assetCreationDate': datetime.datetime(2020,\
+            \ 12, 23, 11, 5, 59, tzinfo=tzlocal()),\n 'assetLastUpdateDate': datetime.datetime(2020,\
+            \ 12, 23, 11, 5, 59, tzinfo=tzlocal()),\n 'assetStatus': {'state': 'ACTIVE'}}\n\
+            \ \n # ASSET SENSOR\n \n {'ResponseMetadata': {'RequestId': '7637b46b-e50f-4455-965c-4f05c536532f',\n\
+            \  'HTTPStatusCode': 200,\n  'HTTPHeaders': {'date': 'Tue, 29 Dec 2020\
+            \ 11:51:58 GMT',\n   'content-type': 'application/json',\n   'content-length':\
+            \ '1274',\n   'connection': 'keep-alive',\n   'x-amzn-requestid': '7637b46b-e50f-4455-965c-4f05c536532f'},\n\
+            \  'RetryAttempts': 0},\n 'assetId': '0c3e74fa-65f5-4147-a17b-395d6b5facd3',\n\
+            \ 'assetArn': 'arn:aws:iotsitewise:eu-west-1:241091466505:asset/0c3e74fa-65f5-4147-a17b-395d6b5facd3',\n\
+            \ 'assetName': 'newassetsensor333',\n 'assetModelId': '228a970c-e269-450c-b2be-606638698640',\n\
+            \ 'assetProperties': [{'id': 'ce9f4f4d-47f0-40e0-b8f5-1288ce1c4e0a',\n\
+            \   'name': 'Temperature',\n   'notification': {'topic': '$aws/sitewise/asset-models/228a970c-e269-450c-b2be-606638698640/assets/0c3e74fa-65f5-4147-a17b-395d6b5facd3/properties/ce9f4f4d-47f0-40e0-b8f5-1288ce1c4e0a',\n\
+            \    'state': 'DISABLED'},\n   'dataType': 'DOUBLE'},\n  {'id': 'fd7ba31a-d1b6-4f57-a2de-7567fa76c7e1',\n\
+            \   'name': 'Movement',\n   'notification': {'topic': '$aws/sitewise/asset-models/228a970c-e269-450c-b2be-606638698640/assets/0c3e74fa-65f5-4147-a17b-395d6b5facd3/properties/fd7ba31a-d1b6-4f57-a2de-7567fa76c7e1',\n\
+            \    'state': 'DISABLED'},\n   'dataType': 'INTEGER'},\n  {'id': 'dd64771a-6ff7-458d-bfd6-6c0f8dc2da91',\n\
+            \   'name': 'Avg Temp (5 min)',\n   'notification': {'topic': '$aws/sitewise/asset-models/228a970c-e269-450c-b2be-606638698640/assets/0c3e74fa-65f5-4147-a17b-395d6b5facd3/properties/dd64771a-6ff7-458d-bfd6-6c0f8dc2da91',\n\
+            \    'state': 'DISABLED'},\n   'dataType': 'DOUBLE'}],\n 'assetHierarchies':\
+            \ [],\n 'assetCompositeModels': [],\n 'assetCreationDate': datetime.datetime(2020,\
+            \ 12, 28, 16, 18, tzinfo=tzlocal()),\n 'assetLastUpdateDate': datetime.datetime(2020,\
+            \ 12, 28, 16, 18, tzinfo=tzlocal()),\n 'assetStatus': {'state': 'ACTIVE'}}\n"
+        "404":
+          description: Entity with specified id was not found
+      x-openapi-router-controller: swagger_server.controllers.sensors_controller
+    delete:
+      tags:
+      - Sensors
+      operationId: delete_sensor
+      parameters:
+      - name: sensorId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/Id'
+      responses:
+        "204":
+          description: "Entity removed successfully\n\n{'ResponseMetadata': {'RequestId':\
+            \ '29725450-cf09-4a74-b510-a525c915834f', \n'HTTPStatusCode': 202, 'HTTPHeaders':\
+            \ {'date': 'Mon, 28 Dec 2020 11:09:41 GMT', 'content-type': 'application/json',\
+            \ \n'content-length': '36', 'connection': 'keep-alive', 'x-amzn-requestid':\
+            \ '29725450-cf09-4a74-b510-a525c915834f'}, \n'RetryAttempts': 0}, \n'assetStatus':\
+            \ {'state': 'DELETING'}}\n"
+        "404":
+          description: Entity with specified id was not found
+        "406":
+          description: Can not be delated because there are zones associated...
+      x-openapi-router-controller: swagger_server.controllers.sensors_controller
+  /sensors/properties/:
+    put:
+      tags:
+      - Sensors
+      operationId: put_sensor_property_value
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssetProperty'
+        required: true
+      responses:
+        "200":
+          description: |2
+
+            {'ResponseMetadata': {'RequestId': 'e4209028-6785-4769-a639-ff51e6be8fb6',
+            'HTTPStatusCode': 200,
+            'HTTPHeaders': {'date': 'Mon, 28 Dec 2020 10:56:17 GMT',
+             'content-type': 'application/json',
+             'content-length': '19',
+             'connection': 'keep-alive',
+             'x-amzn-requestid': 'e4209028-6785-4769-a639-ff51e6be8fb6'},
+            'RetryAttempts': 0},
+            'errorEntries': []}
+        "404":
+          description: Entity with specified id was not found
+      x-openapi-router-controller: swagger_server.controllers.sensors_controller
+  /sensors/properties/{sensorId}:
+    get:
+      tags:
+      - Sensors
+      operationId: get_sensor_property_values
+      parameters:
+      - name: sensorId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/Id'
+      responses:
+        "200":
+          description: "Get sensor property values\n\n\nSENSOR_NODE:\n{'Wattage':\
+            \ {'value': {'doubleValue': 2000.0},\n  'timestamp': {'timeInSeconds':\
+            \ 1607011676, 'offsetInNanos': 0},\n  'quality': 'GOOD'},\n 'Temperature':\
+            \ 'null',\n 'WorkingState': 'null',\n 'Movement': 'null',\n 'Avg Temperature\
+            \ (5 min)': 'null',\n 'Avg Temperature (Day)': 'null',\n 'Power Usage':\
+            \ 'null',\n 'Avg Power Usage (5min)': 'null'}\n\nASSET_SENSOR:\n{'Temperature':\
+            \ 'null', \n 'Movement': 'null', \n 'Avg Temp (5 min)': 'null'}\n  \n"
+        "404":
+          description: Entity with specified id was not found
+      x-openapi-router-controller: swagger_server.controllers.sensors_controller
+  /sensors/properties/history:
+    post:
+      tags:
+      - Sensors
+      operationId: get_sensor_property_value_history
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssetPropertyValueHistoryRequest'
+        required: true
+      responses:
+        "200":
+          description: |
+            Get property values from a specified time range.
+        "404":
+          description: Entity with specified id was not found
+      x-openapi-router-controller: swagger_server.controllers.sensors_controller
+  /sensor/{sensorId}/parents:
+    get:
+      tags:
+      - Sensors
+      operationId: get_sensor_parents
+      parameters:
+      - name: sensorId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/Id'
+      responses:
+        "200":
+          description: "Get parent zones of the sensor\n\n{'ResponseMetadata': {'RequestId':\
+            \ 'fa869e95-671c-422e-9e66-0efb25f34ec8',\n  'HTTPStatusCode': 200,\n\
+            \  'HTTPHeaders': {'date': 'Mon, 28 Dec 2020 15:34:29 GMT',\n   'content-type':\
+            \ 'application/json',\n   'content-length': '407',\n   'connection': 'keep-alive',\n\
+            \   'x-amzn-requestid': 'fa869e95-671c-422e-9e66-0efb25f34ec8'},\n  'RetryAttempts':\
+            \ 0},\n  \n 'assetSummaries': [{'id': '0e6499c9-2945-4bd8-8c93-3e193602d0a3',\n\
+            \   'arn': 'arn:aws:iotsitewise:eu-west-1:241091466505:asset/0e6499c9-2945-4bd8-8c93-3e193602d0a3',\n\
+            \   'name': 'zone333',\n   'assetModelId': 'a106a0e4-1d20-46dc-a7a3-8dd3f902f48d',\n\
+            \   'creationDate': datetime.datetime(2020, 12, 28, 12, 7, 26, tzinfo=tzlocal()),\n\
+            \   'lastUpdateDate': datetime.datetime(2020, 12, 28, 12, 7, 26, tzinfo=tzlocal()),\n\
+            \   'status': {'state': 'ACTIVE'},\n   'hierarchies': [{'id': 'd883ac38-6437-4180-8ef5-124d0358241a',\n\
+            \     'name': 'ZoneChilds'}]}]}\n"
+        "404":
+          description: Entity with specified id was not found
+      x-openapi-router-controller: swagger_server.controllers.sensors_controller
+components:
+  schemas:
+    CreateSensor:
+      type: object
+      properties:
+        name:
+          type: string
+        sensorType:
+          $ref: '#/components/schemas/SensorType'
+        device_id:
+          type: string
+#    AssetPropertyString:
+#      type: object
+#      properties:
+#        propertyName:
+#          type: string
+#        assetId:
+#          type: string
+#        stringValue:
+#          type: string
+#    AssetPropertyInteger:
+#      type: object
+#      properties:
+#        propertyName:
+#          type: string
+#        assetId:
+#          type: string
+#        integerValue:
+#          type: number
+#    AssetPropertyDouble:
+#      type: object
+#      properties:
+#        propertyName:
+#          type: string
+#        assetId:
+#          type: string
+#        integerValue:
+#          type: number
+#          format: double
+#    AssetPropertyBoolean:
+#      type: object
+#      properties:
+#        propertyName:
+#          type: string
+#        assetId:
+#          type: string
+#        integerValue:
+#          type: boolean
+#    AssetProperty:
+#      oneOf:
+#      - $ref: '#/components/schemas/AssetPropertyString'
+#      - $ref: '#/components/schemas/AssetPropertyInteger'
+#      - $ref: '#/components/schemas/AssetPropertyDouble'
+#      - $ref: '#/components/schemas/AssetPropertyBoolean'
+    SensorType:
+      type: string
+      properties:
+        sensorType:
+          type: string
+          enum:
+          - SENSOR_NODE
+          - ASSET_SENSOR
+    AssetProperty:
+      type: object
+      properties:
+        propertyName:
+          type: string
+        assetId:
+          type: string
+        dataType:
+          type: string
+          enum: [ 'integerValue', 'stringValue', 'doubleValue', 'booleanValue' ]
+        value:
+          # TODO
+          type: string
+    Id:
+      type: string
+    Name:
+      type: string
+    NameObj:
+      type: object
+      properties:
+        Name:
+          type: string
+    TODO:
+      type: object
+      properties:
+        Name:
+          type: string
+    AssetPropertyValueHistoryRequest:
+      type: object
+      required:
+      - assetId
+      - startDate
+      - endDate
+      properties:
+        assetId:
+          type: string
+        maxResults:
+          type: number
+          example: 50
+        startDate:
+          type: string
+          format: datetime
+          pattern: ([0-9]{4})-([0-9]{2})-([0-9]{2})
+          example: "2020-12-20"
+        endDate:
+          type: string
+          format: datetime
+          pattern: ([0-9]{4})-([0-9]{2})-([0-9]{2})
+          example: "2020-12-30"
+        timeOrdering:
+          type: string
+          enum: ["ASCENDING", "DESCENDING"]
+        include_prop:
+          type: array
+          items:
+            type: string
+          example: ["Temperature", "WorkingState"]
+
+
+####################### SECURITY
+
+  securitySchemes:
+    basicAuth:     # <-- arbitrary name for the security scheme
+      type: http
+      scheme: basic
+      x-basicInfoFunc: application.basic_auth
+
+security:
+  - basicAuth: ['secret']  # <-- use the same name here
+#  - basicAuth: ['secret']  # <-- use the same name here
+
+#   securitySchemes:
+#     oAuth2Password:
+#       type: oauth2
+#       description: See https://developers.getbase.com/docs/rest/articles/oauth2/requests
+#       flows:
+#         password:
+#           tokenUrl: https://api.getbase.com/oauth2/token
+#           scopes: {}
+# security:
+#   - oAuth2Password: []
+
+
+#  responses:
+#    TODO!!!

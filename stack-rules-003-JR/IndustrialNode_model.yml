@@ -1,0 +1,85 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+# Example command to deploy from terminal using SAM CLI:
+
+#aws cloudformation create-stack \
+#--stack-name stackindustrialnode \
+#--template-body file://./IndustrialNode_model.yml \
+#--capabilities CAPABILITY_AUTO_EXPAND CAPABILITY_NAMED_IAM CAPABILITY_IAM \
+#--profile coolgreen \
+#--region eu-west-1 \
+#--parameters ParameterKey=Environment,ParameterValue=dev ParameterKey=Creator,ParameterValue=JR \
+#--tags Key=Creator,Value=JR
+
+Description: >
+  Sitewise asset models for the Treon devices.
+
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues:
+    - dev
+    - staging
+    - prod
+  StackName:
+    Type: String
+    Default: stackmodels_test_industrial_node
+  Creator:
+    Type: String
+    Default: Unknown
+
+# Conditions:
+
+# Mappings:
+
+Resources:
+  # Model 5 (IndustrialNode)
+  IndustrialNodeModel:
+    Type: AWS::IoTSiteWise::AssetModel
+    Properties:
+      AssetModelName: IndustrialNodeModel
+      AssetModelDescription: "Model for the IndustrialNode devices."
+      Tags:
+        - Key: "Creator"
+          Value: !Ref Creator
+        - Key: "Env"
+          Value: !Ref Environment
+
+      AssetModelProperties:
+        - Name: ACName
+          LogicalId: log_ACName
+          DataType: STRING
+          Type:
+            TypeName: Attribute
+            Attribute:
+              DefaultValue: Zone 0
+
+        - Name: Wattage
+          LogicalId: log_IndustrialNodeWattage
+          DataType: DOUBLE
+          Type:
+            TypeName: Attribute
+            Attribute:
+              DefaultValue: 2000
+
+        - Name: sumRMS
+          LogicalId: log_IndustrialNodesumRMS
+          DataType: DOUBLE
+          Type:
+            TypeName: Measurement
+
+        - Name: StateAC
+          DataType: DOUBLE
+          LogicalId: log_IndustrialNodeStateAC
+          Type:
+            TypeName: Transform
+            Transform:
+#              Expression: if(var_industrial_node_sumrms < 80, 0).elif(var_industrial_node_sumrms < 172, 1, 2)
+              Expression: if(lt(var_industrial_node_sumrms, 80), 0).elif(lt(var_industrial_node_sumrms, 172), 1, 2)
+              Variables:
+                - Name: var_industrial_node_sumrms
+                  Value:
+                    PropertyLogicalId: log_IndustrialNodesumRMS
+

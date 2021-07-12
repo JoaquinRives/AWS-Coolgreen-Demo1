@@ -1,0 +1,343 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+# Example command to deploy from terminal using SAM CLI:
+
+#aws cloudformation create-stack \
+#--stack-name stackmodelsV2 \
+#--template-body file://./stackAssetModelsV2_template.yml \
+#--capabilities CAPABILITY_AUTO_EXPAND CAPABILITY_NAMED_IAM CAPABILITY_IAM \
+#--profile coolgreen \
+#--region eu-west-1 \
+#--parameters ParameterKey=Environment,ParameterValue=dev ParameterKey=Creator,ParameterValue=JR \
+#--tags Key=Creator,Value=JR
+
+Description: >
+  Sitewise asset models for the Treon devices.
+
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues:
+    - dev
+    - staging
+    - prod
+  StackName:
+    Type: String
+    Default: stackmodels
+  Creator:
+    Type: String
+    Default: Unknown
+
+# Conditions:
+
+# Mappings:
+
+Resources:
+  # Model 1 (SensorNode)
+  SensorNodeModel:
+    Type: AWS::IoTSiteWise::AssetModel
+    Properties:
+      AssetModelName: SensorNodeModel
+      AssetModelDescription: "Model for the SensorNode devices."
+      Tags:
+        - Key: "Creator"
+          Value: !Ref Creator
+        - Key: "Env"
+          Value: !Ref Environment
+
+      AssetModelProperties:
+        - Name: Wattage
+          LogicalId: log_SensorNodeWattage
+          DataType: DOUBLE
+          Type:
+            TypeName: Attribute
+            Attribute:
+              DefaultValue: 2000
+
+        - Name: Temperature
+          LogicalId: log_SensorNodeTemperature
+          DataType: DOUBLE
+          Type:
+            TypeName: Measurement
+            
+
+#        - Name: WorkingState
+#          LogicalId: log_SensorNodeWorkingState
+#          DataType: INTEGER
+#          Type:
+#            TypeName: Measurement
+
+        - Name: Movement
+          LogicalId: log_SensorNodeMovement
+          DataType: INTEGER
+          Type:
+            TypeName: Measurement
+
+        - Name: Avg Temperature (5 min)
+          LogicalId: log_SensorNodeAvgTemp5min
+          DataType: DOUBLE
+          Type:
+            TypeName: Metric
+            Metric:
+              Expression: avg(var_sensor_node_temperature)
+              Window:
+                Tumbling:
+                  Interval: 5m
+              Variables:
+                - Name: var_sensor_node_temperature
+                  Value:
+                    PropertyLogicalId: log_SensorNodeTemperature
+
+        - Name: Avg Temperature (Day)
+          LogicalId: log_SensorNodeAvgTempDay
+          DataType: DOUBLE
+          Type:
+            TypeName: Metric
+            Metric:
+              Expression: avg(var_sensor_node_temperature)
+              Window:
+                Tumbling:
+                  Interval: 1d
+              Variables:
+                - Name: var_sensor_node_temperature
+                  Value:
+                    PropertyLogicalId: log_SensorNodeTemperature
+
+        - Name: Power Usage
+          DataType: DOUBLE
+          LogicalId: log_SensorNodePowerUsage
+          Type:
+            TypeName: Transform
+            Transform:
+              Expression: var_sensor_node_working_state * var_sensor_node_wattage
+              Variables:
+                - Name: var_sensor_node_wattage
+                  Value:
+                    PropertyLogicalId: log_SensorNodeWattage
+                - Name: var_sensor_node_working_state
+                  Value:
+                    PropertyLogicalId: log_SensorNodeWorkingState
+
+        - Name: WorkingState
+          LogicalId: log_SensorNodeWorkingState
+          DataType: DOUBLE
+          Type:
+            TypeName: Transform
+            Transform:
+              Expression: gt(var_sensor_node_movement,3)*1
+              Variables:
+                - Name: var_sensor_node_movement
+                  Value:
+                    PropertyLogicalId: log_SensorNodeMovement
+
+        - Name: Avg Power Usage (5min)
+          LogicalId: log_SensorNodeAvgPowerUsage5min
+          DataType: DOUBLE
+          Type:
+            TypeName: Metric
+            Metric:
+              Expression: avg(var_sensor_node_power_usage)
+              Window:
+                Tumbling:
+                  Interval: 5m
+              Variables:
+                - Name: var_sensor_node_power_usage
+                  Value:
+                    PropertyLogicalId: log_SensorNodePowerUsage
+
+  # Model 2 (AssetSensor)
+  AssetSensorModel:
+    Type: AWS::IoTSiteWise::AssetModel
+    Properties:
+      AssetModelName: AssetSensorModel
+      AssetModelDescription: "Model for the AssetSensor devices."
+      Tags:
+        - Key: "Creator"
+          Value: !Ref Creator
+        - Key: "Env"
+          Value: !Ref Environment
+
+      AssetModelProperties:
+
+        - Name: Temperature
+          LogicalId: log_AssetSensorTemperature
+          DataType: DOUBLE
+          Type:
+            TypeName: Measurement
+
+        - Name: Movement
+          LogicalId: log_AssetSensorMovement
+          DataType: INTEGER
+          Type:
+            TypeName: Measurement
+
+        - Name: Avg Temp (5 min)
+          LogicalId: log_AssetSensorAvgTemp5min
+          DataType: DOUBLE
+          Type:
+            TypeName: Metric
+            Metric:
+              Expression: avg(var_asset_sensor_temperature)
+              Window:
+                Tumbling:
+                  Interval: 5m
+              Variables:
+                - Name: var_asset_sensor_temperature
+                  Value:
+                    PropertyLogicalId: log_AssetSensorTemperature
+
+  # Model 3 (Zone)
+  ZoneModel:
+    Type: AWS::IoTSiteWise::AssetModel
+    Properties:
+      AssetModelName: ZoneModel
+      AssetModelDescription: "Model for the zones."
+      Tags:
+        - Key: "Creator"
+          Value: !Ref Creator
+        - Key: "Env"
+          Value: !Ref Environment
+
+      AssetModelProperties:
+        - Name: ZoneName
+          LogicalId: log_ZoneName
+          DataType: STRING
+          Type:
+            TypeName: Attribute
+            Attribute:
+              DefaultValue: Zone 0
+
+        - Name: ZoneSensorNodeAvgTemp5min
+          LogicalId: log_ZoneSensorNodeAvgTemp5min
+          DataType: DOUBLE
+          Type:
+            TypeName: Metric
+            Metric:
+              Expression: avg(var_sensor_node_avg_temp_5min)
+              Window:
+                Tumbling:
+                  Interval: 5m
+              Variables:
+                - Name: var_sensor_node_avg_temp_5min
+                  Value:
+                    PropertyLogicalId: log_SensorNodeAvgTemp5min
+                    HierarchyLogicalId: log_SensorNodeChilds
+
+        - Name: ZoneAssetSensorAvgTemp5min
+          LogicalId: log_ZoneAssetSensorAvgTemp5min
+          DataType: DOUBLE
+          Type:
+            TypeName: Metric
+            Metric:
+              Expression: avg(var_asset_sensor_avg_temp_5min)
+              Window:
+                Tumbling:
+                  Interval: 5m
+              Variables:
+                - Name: var_asset_sensor_avg_temp_5min
+                  Value:
+                    PropertyLogicalId: log_AssetSensorAvgTemp5min
+                    HierarchyLogicalId: log_AssetSensorChilds
+
+        - Name: Zone Avg Power Usage (5min)
+          LogicalId: log_ZoneAvgPowerUsage5min
+          DataType: DOUBLE
+          Type:
+            TypeName: Metric
+            Metric:
+              Expression: avg(var_sensor_node_avg_power_usage_5min)
+              Window:
+                Tumbling:
+                  Interval: 5m
+              Variables:
+                - Name: var_sensor_node_avg_power_usage_5min
+                  Value:
+                    PropertyLogicalId: log_SensorNodeAvgPowerUsage5min
+                    HierarchyLogicalId: log_SensorNodeChilds
+
+      AssetModelHierarchies:
+        - ChildAssetModelId: !Ref SensorNodeModel
+          LogicalId: log_SensorNodeChilds
+          Name: SensorNodeChilds
+
+        - ChildAssetModelId: !Ref AssetSensorModel
+          LogicalId: log_AssetSensorChilds
+          Name: AssetSensorChilds
+
+  # Model 4 (Site)
+  SiteModel:
+    Type: AWS::IoTSiteWise::AssetModel
+    Properties:
+      AssetModelName: SiteModel
+      AssetModelDescription: "Model for the sites."
+      Tags:
+        - Key: "Creator"
+          Value: !Ref Creator
+        - Key: "Env"
+          Value: !Ref Environment
+
+      AssetModelProperties:
+        - Name: SiteName
+          LogicalId: log_SiteName
+          DataType: STRING
+          Type:
+            TypeName: Attribute
+            Attribute:
+              DefaultValue: Site 0
+
+        - Name: Site Sensor Node Avg Temp (5min)
+          LogicalId: log_SiteSensorNodeAvgTemp5min
+          DataType: DOUBLE
+          Type:
+            TypeName: Metric
+            Metric:
+              Expression: avg(var_zone_sensor_node_avg_temp_5min)
+              Window:
+                Tumbling:
+                  Interval: 5m
+              Variables:
+                - Name: var_zone_sensor_node_avg_temp_5min
+                  Value:
+                    PropertyLogicalId: log_ZoneSensorNodeAvgTemp5min
+                    HierarchyLogicalId: log_ZoneChilds
+
+        - Name: Site Asset Sensor Avg Temp (5min)
+          LogicalId: log_SiteAssetSensorAvgTemp5min
+          DataType: DOUBLE
+          Type:
+            TypeName: Metric
+            Metric:
+              Expression: avg(var_zone_asset_sensor_avg_temp_5min)
+              Window:
+                Tumbling:
+                  Interval: 5m
+              Variables:
+                - Name: var_zone_asset_sensor_avg_temp_5min
+                  Value:
+                    PropertyLogicalId: log_ZoneAssetSensorAvgTemp5min
+                    HierarchyLogicalId: log_ZoneChilds
+
+        - Name: Site Avg Power Usage (5min)
+          LogicalId: log_SiteAvgPowerUsage5min
+          DataType: DOUBLE
+          Type:
+            TypeName: Metric
+            Metric:
+              Expression: avg(var_zone_avg_power_usage_5min)
+              Window:
+                Tumbling:
+                  Interval: 5m
+              Variables:
+                - Name: var_zone_avg_power_usage_5min
+                  Value:
+                    PropertyLogicalId: log_ZoneAvgPowerUsage5min
+                    HierarchyLogicalId: log_ZoneChilds
+
+      AssetModelHierarchies:
+        - ChildAssetModelId: !Ref ZoneModel
+          LogicalId: log_ZoneChilds
+          Name: ZoneChilds
+
+# Outputs:

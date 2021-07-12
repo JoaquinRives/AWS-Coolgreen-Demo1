@@ -1,0 +1,364 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+
+# @author: Joaquin Rives
+# @email: joaquin.rives01@gmail.com
+# @date: January 2021
+
+# Example command to deploy from terminal using SAM CLI:
+
+# CREATE:
+
+#aws cloudformation create-stack \
+#--stack-name stackrulesv2 \
+#--template-body file://./stackRulesV2_template.yml \
+#--capabilities CAPABILITY_AUTO_EXPAND CAPABILITY_NAMED_IAM CAPABILITY_IAM \
+#--profile coolgreen \
+#--region eu-west-1 \
+#--parameters ParameterKey=Environment,ParameterValue=dev \
+#--tags Key=Creator,Value=JR
+
+# UPDATE:
+
+#aws cloudformation update-stack \
+#--stack-name stackrulesv2 \
+#--template-body file://./stackRulesV2_template.yml \
+#--capabilities CAPABILITY_AUTO_EXPAND CAPABILITY_NAMED_IAM CAPABILITY_IAM \
+#--profile coolgreen \
+#--region eu-west-1 \
+#--parameters ParameterKey=Environment,ParameterValue=dev \
+#--tags Key=Creator,Value=JR
+
+
+
+Description: >
+  Stack of IoT topic rules for ingestion of sensor data from IoT-Core MQTT Broker messages to assets
+  properties in IoT-SiteWise.
+
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues:
+    - dev
+    - staging
+    - prod
+  StackName:
+    Type: String
+    Default: stackrules
+  Creator:
+    Type: String
+    Default: Unknown
+  SensorNodeACName:
+    Type: String
+    Default: SensorNodeAC
+  AssetSensorName:
+    Type: String
+    Default: AssetSensor
+
+# Conditions:
+
+# Mappings:
+
+Resources:
+  # Rule 1
+  SensorNodeACRoutineRule:
+    Type: AWS::IoT::TopicRule
+    Description: >
+      Ingests SensorNodeAC data from IoT-Core MQTT Broker messages to its corresponding
+      assets in IoT-SiteWise.
+      The query statement selects only the messages that the SensorNodeACs send every 5 min
+      where all the fields are available.
+    Properties:
+      RuleName:
+        Fn::Join:
+          - ''
+          - - 'SensorNodeACRoutineRule'
+            - Ref: Environment
+      TopicRulePayload:
+        RuleDisabled: false
+        AwsIotSqlVersion: '2016-03-23'
+        Sql:
+          SELECT *, 'SensorNodeAC' as SensorType,
+          CASE Movement
+          WHEN 4 THEN 1
+          ELSE 0
+          END AS WorkingState
+          FROM 'treon/devices/#'
+          WHERE IsUndefined(Temperature) = False
+          AND IsUndefined(Humidity) = False
+          AND IsUndefined(Acceleration) = True
+        Actions:
+          - IotSiteWise:
+              PutAssetPropertyValueEntries:
+              - PropertyAlias: "/sitewise/treon/devices/${SensorNodeId}/Temperature"
+                PropertyValues:
+                - Timestamp:
+                    TimeInSeconds: "${floor(Timestamp)}"
+                    OffsetInNanos: "${floor((Timestamp % 1) * 1E9)}"
+                  Value:
+                    DoubleValue: "${Temperature}"
+
+              - PropertyAlias: "/sitewise/treon/devices/${SensorNodeId}/Humidity"
+                PropertyValues:
+                  - Timestamp:
+                      TimeInSeconds: "${floor(Timestamp)}"
+                      OffsetInNanos: "${floor((Timestamp % 1) * 1E9)}"
+                    Value:
+                      DoubleValue: "${Humidity}"
+
+              - PropertyAlias: "/sitewise/treon/devices/${SensorNodeId}/Movement"
+                PropertyValues:
+                  - Timestamp:
+                      TimeInSeconds: "${floor(Timestamp)}"
+                      OffsetInNanos: "${floor((Timestamp % 1) * 1E9)}"
+                    Value:
+                      IntegerValue: "${Movement}"
+#              - PropertyAlias: "/sitewise/treon/devices/${SensorNodeId}/WorkingState"
+#                PropertyValues:
+#                  - Timestamp:
+#                      TimeInSeconds: "${floor(Timestamp)}"
+#                      OffsetInNanos: "${floor((Timestamp % 1) * 1E9)}"
+#                    Value:
+#                      IntegerValue: "${WorkingState}"
+              RoleArn: !GetAtt RulesSitewiseRole.Arn
+  # Rule 2
+  SensorNodeACMovementDetectedRule:
+    Type: AWS::IoT::TopicRule
+    Description: >
+      Ingests SensorNodeAC data from IoT-Core MQTT Broker messages to its corresponding
+      assets in IoT-SiteWise.
+      The query statement selects only Movement data send by the SensorNodeAC sensors when triggered
+      by detection of movement.
+    Properties:
+      RuleName:
+        Fn::Join:
+          - ''
+          - - 'SensorNodeACMovementRule'
+            - Ref: Environment
+      TopicRulePayload:
+        RuleDisabled: false
+        AwsIotSqlVersion: '2016-03-23'
+        Sql:
+          SELECT Movement, 'SensorNodeAC' as SensorType,
+          CASE Movement
+          WHEN 4 THEN 1
+          ELSE 0
+          END AS WorkingState
+          FROM 'treon/devices/#'
+          WHERE IsUndefined(Acceleration) = True
+          AND IsUndefined(Temperature) = True
+
+        Actions:
+          - IotSiteWise:
+              PutAssetPropertyValueEntries:
+              - PropertyAlias: "/sitewise/treon/devices/${SensorNodeId}/Movement"
+                PropertyValues:
+                - Timestamp:
+                    TimeInSeconds: "${floor(Timestamp)}"
+                    OffsetInNanos: "${floor((Timestamp % 1) * 1E9)}"
+                  Value:
+                    IntegerValue: "${Movement}"
+#              - PropertyAlias: "/sitewise/treon/devices/${SensorNodeId}/WorkingState"
+#                PropertyValues:
+#                  - Timestamp:
+#                      TimeInSeconds: "${floor(Timestamp)}"
+#                      OffsetInNanos: "${floor((Timestamp % 1) * 1E9)}"
+#                    Value:
+#                      IntegerValue: "${WorkingState}"
+              RoleArn: !GetAtt RulesSitewiseRole.Arn
+  # Rule 3
+  AssetSensorRule:
+    Type: AWS::IoT::TopicRule
+    Description: >
+      Ingests AssetSensor data from IoT-Core MQTT Broker messages to its corresponding
+      assets in IoT-SiteWise.
+    Properties:
+      RuleName:
+        Fn::Join:
+          - ''
+          - - 'AssetSensorRule'
+            - Ref: Environment
+      TopicRulePayload:
+        RuleDisabled: false
+        AwsIotSqlVersion: '2016-03-23'
+        Sql:
+          SELECT get((select value X from Acceleration), 0) as AccX,
+          get((select value Y from Acceleration), 0) as AccY,
+          get((select value Z from Acceleration), 0) as AccZ,
+          Movement,
+          'AssetSensor' as SensorType
+          FROM 'treon/devices/#'
+          WHERE IsUndefined(Acceleration) = False
+        Actions:
+          - IotSiteWise:
+              PutAssetPropertyValueEntries:
+              - PropertyAlias: "/sitewise/treon/devices/${SensorNodeId}/Movement"
+                PropertyValues:
+                - Timestamp:
+                    TimeInSeconds: "${floor(Timestamp)}"
+                    OffsetInNanos: "${floor((Timestamp % 1) * 1E9)}"
+                  Value:
+                    IntegerValue: "${Movement}"
+
+#              - PropertyAlias: "/sitewise/treon/devices/${SensorNodeId}/AccX"
+#                PropertyValues:
+#                  - Timestamp:
+#                      TimeInSeconds: "${floor(Timestamp)}"
+#                      OffsetInNanos: "${floor((Timestamp % 1) * 1E9)}"
+#                    Value:
+#                      DoubleValue: "${AccX}"
+#
+#              - PropertyAlias: "/sitewise/treon/devices/${SensorNodeId}/AccY"
+#                PropertyValues:
+#                  - Timestamp:
+#                      TimeInSeconds: "${floor(Timestamp)}"
+#                      OffsetInNanos: "${floor((Timestamp % 1) * 1E9)}"
+#                    Value:
+#                      IntegerValue: "${AccY}"
+#
+#              - PropertyAlias: "/sitewise/treon/devices/${SensorNodeId}/AccZ"
+#                PropertyValues:
+#                  - Timestamp:
+#                      TimeInSeconds: "${floor(Timestamp)}"
+#                      OffsetInNanos: "${floor((Timestamp % 1) * 1E9)}"
+#                    Value:
+#                      IntegerValue: "${AccZ}"
+              RoleArn: !GetAtt RulesSitewiseRole.Arn
+
+  # Rule 4
+  IndustrialNodeVibrationXRule:
+    Type: AWS::IoT::TopicRule
+    Description: >
+      IndustrialNode rule.
+    Properties:
+      RuleName:
+        Fn::Join:
+          - ''
+          - - 'IndustrialNodeVibrationXRule'
+            - Ref: Environment
+      TopicRulePayload:
+        RuleDisabled: false
+        AwsIotSqlVersion: '2016-03-23'
+        Sql:
+          SELECT *,
+          'IndustrialNode' as SensorType
+          FROM 'treon/devices/#'
+          WHERE IsUndefined(Vibration.RMS.X) = False
+
+        Actions:
+          - IotSiteWise:
+              PutAssetPropertyValueEntries:
+                - PropertyAlias: "/sitewise/treon/devices/${SensorNodeId}/sumRMS"
+                  PropertyValues:
+                    - Timestamp:
+                        TimeInSeconds: "${floor(Timestamp)}"
+                        OffsetInNanos: "${floor((Timestamp % 1) * 1E9)}"
+                      Value:
+                        DoubleValue: "${Vibration.RMS.X}"
+              RoleArn: !GetAtt RulesSitewiseRole.Arn
+
+  # Rule 5
+  IndustrialNodeVibrationYRule:
+    Type: AWS::IoT::TopicRule
+    Description: >
+      IndustrialNode rule.
+    Properties:
+      RuleName:
+        Fn::Join:
+          - ''
+          - - 'IndustrialNodeVibrationYRule'
+            - Ref: Environment
+      TopicRulePayload:
+        RuleDisabled: false
+        AwsIotSqlVersion: '2016-03-23'
+        Sql:
+          SELECT *,
+          'IndustrialNode' as SensorType
+          FROM 'treon/devices/#'
+          WHERE IsUndefined(Vibration.RMS.Y) = False
+
+        Actions:
+          - IotSiteWise:
+              PutAssetPropertyValueEntries:
+                - PropertyAlias: "/sitewise/treon/devices/${SensorNodeId}/sumRMS"
+                  PropertyValues:
+                    - Timestamp:
+                        TimeInSeconds: "${floor(Timestamp)}"
+                        OffsetInNanos: "${floor((Timestamp % 1) * 1E9)}"
+                      Value:
+                        DoubleValue: "${Vibration.RMS.Y}"
+              RoleArn: !GetAtt RulesSitewiseRole.Arn
+
+  # Rule 6
+  IndustrialNodeVibrationZRule:
+    Type: AWS::IoT::TopicRule
+    Description: >
+      IndustrialNode rule.
+    Properties:
+      RuleName:
+        Fn::Join:
+          - ''
+          - - 'IndustrialNodeVibrationZRule'
+            - Ref: Environment
+      TopicRulePayload:
+        RuleDisabled: false
+        AwsIotSqlVersion: '2016-03-23'
+        Sql:
+          SELECT *,
+          'IndustrialNode' as SensorType
+          FROM 'treon/devices/#'
+          WHERE IsUndefined(Vibration.RMS.Z) = False
+
+        Actions:
+          - IotSiteWise:
+              PutAssetPropertyValueEntries:
+                - PropertyAlias: "/sitewise/treon/devices/${SensorNodeId}/sumRMS"
+                  PropertyValues:
+                    - Timestamp:
+                        TimeInSeconds: "${floor(Timestamp)}"
+                        OffsetInNanos: "${floor((Timestamp % 1) * 1E9)}"
+                      Value:
+                        DoubleValue: "${Vibration.RMS.Z}"
+              RoleArn: !GetAtt RulesSitewiseRole.Arn
+
+  # Role & Policies
+  RulesSitewiseRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - iot.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      RoleName:
+        Fn::Join:
+          - '-'
+          - - RulesSitewiseRole
+            - Ref: Environment
+      Description: >
+        Role with the permissions needed for putting/publishing properties values in sitewise.
+      Tags:
+        - Key: "Creator"
+          Value: !Ref Creator
+        - Key: "Env"
+          Value: !Ref Environment
+      Policies:
+        - PolicyName:
+            Fn::Join:
+              - '-'
+              - - RulesSitewisePolice
+                - Ref: Environment
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action: '*'
+                Resource: '*'
+
+# Outputs:
